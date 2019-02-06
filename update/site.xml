@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.epsilon.emc.emfviews.dt.feature_1.0.0.201902061803.jar" id="org.eclipse.epsilon.emc.emfviews.dt.feature" version="1.0.0.201902061803">
+   <feature url="features/org.eclipse.epsilon.emc.emfviews.dt.feature_1.0.0.201902061811.jar" id="org.eclipse.epsilon.emc.emfviews.dt.feature" version="1.0.0.201902061811">
       <category name="org.eclipse.epsilon.emc.emfviews"/>
    </feature>
-   <feature url="features/org.eclipse.epsilon.emc.emfviews.feature_1.0.0.201902061803.jar" id="org.eclipse.epsilon.emc.emfviews.feature" version="1.0.0.201902061803">
+   <feature url="features/org.eclipse.epsilon.emc.emfviews.feature_1.0.0.201902061811.jar" id="org.eclipse.epsilon.emc.emfviews.feature" version="1.0.0.201902061811">
       <category name="org.eclipse.epsilon.emc.emfviews"/>
    </feature>
    <category-def name="org.eclipse.epsilon.emc.emfviews" label="EMF Views EMC Driver for Epsilon"/>
