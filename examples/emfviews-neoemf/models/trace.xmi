@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Log:Log xmi:version="2.0"    xmlns:xmi="http://www.omg.org/XMI"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:Log="Log"    xsi:schemaLocation="Log ../metamodels/Log.ecore"
+         name="test">
+  <events name="resource"></events>
+  <events name="resourceSet"></events>
+  <events name="uri"></events>
+  <events name="options"></events>
+</Log:Log>
