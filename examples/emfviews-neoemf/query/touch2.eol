@@ -1,0 +1,5 @@
+Event.all
+  .select(e | e.javaVariables.size() > 2)
+  .first
+  .javaVariables.variable.originalCompilationUnit.name.asSet()
+  .println();

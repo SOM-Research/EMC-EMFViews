@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.atlanmod.emfviews.core.ViewResource;
 import org.eclipse.emf.ecore.EObject;
@@ -31,6 +32,11 @@ public class EMFViewsModel extends EmfModel {
 		// Assume that we are on NeoEMF for now
 		IModel neoemfModel = models.values().iterator().next();
 		return new EMFViewsCollectionWrapper(neoemfModel.getAllOfKind(kind));
+		
+		// Native EMF Views allInstances
+//	    ViewResource r = (ViewResource) modelImpl;
+//	    Collection<EObject> result = r.getView().getAllInstances(kind).collect(Collectors.toList());
+
 	}
 	
 	@Override

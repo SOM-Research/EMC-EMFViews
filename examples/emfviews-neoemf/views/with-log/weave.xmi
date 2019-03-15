@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<virtualLinks:WeavingModel
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:virtualLinks="http://www.atlanmod.org/emfviews/virtuallinks/0.3.0"
+    name="test">
+  <virtualLinks
+      xsi:type="virtualLinks:VirtualAssociation"
+      name="javaVariables"
+      source="//@contributingModels.0/@concreteElements.0"
+      target="//@contributingModels.1/@concreteElements.0"
+      upperBound="-1"/>
+  <contributingModels
+      URI="Log">
+    <concreteElements
+        xsi:type="virtualLinks:ConcreteConcept"
+        path="Event"/>
+  </contributingModels>
+  <contributingModels
+      URI="http://www.eclipse.org/MoDisco/Java/0.2.incubation/java-neoemf">
+    <concreteElements
+        xsi:type="virtualLinks:ConcreteConcept"
+        path="SingleVariableAccess"/>
+  </contributingModels>
+</virtualLinks:WeavingModel>
