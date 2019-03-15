@@ -293,6 +293,13 @@ version(s), and exceptions or additional permissions here}.&quot;
   You may add additional accurate notices of copyright ownership.
    </license>
 
+   <requires>
+      <import plugin="org.eclipse.epsilon.emc.emf" version="1.5.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.epsilon.eol.engine" version="1.5.1" match="greaterOrEqual"/>
+      <import plugin="org.atlanmod.emfviews" version="0.3.0" match="greaterOrEqual"/>
+      <import plugin="fr.inria.atlanmod.neoemf.core" version="1.0.3" match="greaterOrEqual"/>
+   </requires>
+
    <plugin
          id="org.eclipse.epsilon.emc.emfviews"
          download-size="0"

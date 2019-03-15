@@ -2,28 +2,70 @@ package org.eclipse.epsilon.emc.emfviews;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.atlanmod.emfviews.core.ViewResource;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.epsilon.emc.emf.EmfModel;
+import org.eclipse.epsilon.emc.neoemf.NeoEMFModel;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
+import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
+import org.eclipse.epsilon.eol.models.IModel;
 
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
 
+import static java.text.MessageFormat.format;
+
 public class EMFViewsModel extends EmfModel {
 
+	private Map<Resource, IModel> models = new HashMap<>();
+	
 	@Override
 	public Collection<EObject> getAllOfKind(String kind) throws EolModelElementTypeNotFoundException {
 		System.out.println("EMF Views Driver: AllOfKind(" + kind + ")");
-		Instant start = Instant.now();
-		Collection<EObject> result = super.getAllOfKind(kind);
-		Instant end = Instant.now();
-		System.out.println("Done: " + Duration.between(start, end).toMillis() + "ms");
-		return result;
+		// Assume that we are on NeoEMF for now
+		IModel neoemfModel = models.values().iterator().next();
+		return new EMFViewsCollectionWrapper(neoemfModel.getAllOfKind(kind));
 	}
-
+	
+	@Override
+	public void load() throws EolModelLoadingException {
+		super.load();
+		ViewResource r = (ViewResource) modelImpl;
+		for(Resource resource : r.getView().getContributingModels()) {
+			IModel model;
+			if(resource instanceof PersistentResource) {
+				model = initNeoEMFModel(resource);
+			} // else if (additional supported backends)
+			else {
+				model = initDefaultEMFModel(resource);
+			}
+			models.put(resource, model);
+		}
+	}
+	
+	private IModel initNeoEMFModel(Resource resource) {
+		NeoEMFModel model = new NeoEMFModel();
+		System.out.println(format("Loading EMF connector {0} for model {1}", model.getClass().getSimpleName(), resource.getURI()));
+		model.setResource(resource);
+		model.initBackend();
+		model.setGremlinSupport(true);
+		return model;
+	}
+	
+	private IModel initDefaultEMFModel(Resource resource) {
+		EmfModel model = new EmfModel();
+		System.out.println(format("Loading EMF connector {0} for model {1}", model.getClass().getSimpleName(), resource.getURI()));
+		model.setResource(resource);
+		return model;
+	}
+	
+	
 	/**
 	 * Unload the view.
 	 */
