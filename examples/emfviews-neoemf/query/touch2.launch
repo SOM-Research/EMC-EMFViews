@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.epsilon.eol.eclipse.dt.launching.EolLaunchConfigurationDelegate">
-    <booleanAttribute key="fine_grained_profiling" value="false"/>
-    <listAttribute key="models">
-        <listEntry value="aliases=&#10;reuseUnmodifiedFileBasedMetamodels=true&#10;modelFile=/emfviews-neoemf/views/with-log/with-log.eview&#10;metamodelUri=&#10;type=emf-views&#10;readOnLoad=true&#10;storeOnDisposal=false&#10;expand=false&#10;fileBasedMetamodelUri=platform\:/resource/emfviews-neoemf/views/with-log/with-log.eviewpoint&#10;metamodelFile=/emfviews-neoemf/views/with-log/with-log.eviewpoint&#10;cached=false&#10;name=with-log&#10;modelUri=platform\:/resource/emfviews-neoemf/views/with-log/with-log.eview&#10;isMetamodelFileBased=true"/>
-    </listAttribute>
-    <listAttribute key="parameters"/>
-    <booleanAttribute key="profile_model_loading" value="false"/>
-    <booleanAttribute key="profiling_enabled" value="false"/>
-    <booleanAttribute key="reset_profiler" value="false"/>
-    <stringAttribute key="source" value="/emfviews-neoemf/query/touch2.eol"/>
+<booleanAttribute key="fine_grained_profiling" value="false"/>
+<listAttribute key="models">
+<listEntry value="#Fri Mar 15 16:42:31 CET 2019&#13;&#10;isMetamodelFileBased=true&#13;&#10;name=with-log&#13;&#10;readOnLoad=true&#13;&#10;storeOnDisposal=false&#13;&#10;aliases=&#13;&#10;cached=false&#13;&#10;fileBasedMetamodelUri=platform\:/resource/emfviews-neoemf/views/with-log/with-log.eviewpoint&#13;&#10;metamodelUri=&#13;&#10;modelUri=platform\:/resource/emfviews-neoemf/views/with-log/with-log.eview&#13;&#10;reuseUnmodifiedFileBasedMetamodels=true&#13;&#10;type=emf-views&#13;&#10;modelFile=/emfviews-neoemf/views/with-log/with-log.eview&#13;&#10;expand=false&#13;&#10;metamodelFile=/emfviews-neoemf/views/with-log/with-log.eviewpoint"/>
+</listAttribute>
+<listAttribute key="parameters"/>
+<booleanAttribute key="profile_model_loading" value="false"/>
+<booleanAttribute key="profiling_enabled" value="false"/>
+<booleanAttribute key="reset_profiler" value="false"/>
+<stringAttribute key="source" value="/emfviews-neoemf/query/touch2.eol"/>
 </launchConfiguration>

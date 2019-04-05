@@ -1,13 +1,10 @@
 package org.eclipse.epsilon.emc.emfviews;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
+import static java.text.MessageFormat.format;
+
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.atlanmod.emfviews.core.ViewResource;
 import org.eclipse.emf.ecore.EObject;
@@ -19,8 +16,6 @@ import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 import org.eclipse.epsilon.eol.models.IModel;
 
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
-
-import static java.text.MessageFormat.format;
 
 public class EMFViewsModel extends EmfModel {
 
