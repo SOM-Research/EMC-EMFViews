@@ -73,6 +73,7 @@ public class EMFViewsModel extends EmfModel {
   public void load() throws EolModelLoadingException {
     super.load();
     ViewResource r = (ViewResource) modelImpl;
+
     for(Resource resource : r.getView().getContributingModels()) {
       IModel model;
       if (resource instanceof EpsilonResource) {

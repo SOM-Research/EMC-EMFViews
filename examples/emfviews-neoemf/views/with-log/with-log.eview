@@ -1,3 +1,3 @@
-contributingModels=../../models/sample.graphdb,../../models/trace.xmi
+contributingModels=java::../../models/sample.graphdb,log::../../models/trace.xmi
 viewpoint=with-log.eviewpoint
 matchingModel=matching.ecl
