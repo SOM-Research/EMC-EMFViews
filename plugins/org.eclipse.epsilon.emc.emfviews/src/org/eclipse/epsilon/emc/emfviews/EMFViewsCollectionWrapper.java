@@ -13,14 +13,14 @@ import org.eclipse.epsilon.eol.models.IModel;
 public class EMFViewsCollectionWrapper implements Collection<EObject>, IAbstractOperationContributor {
 
 //	private IModel model;
-	
+
 	private Collection baseCollection;
-	
+
 	public EMFViewsCollectionWrapper(Collection<?> baseCollection) {
 //		this.model = model;
 		this.baseCollection = baseCollection;
 	}
-	
+
 	public Collection getBaseCollection() {
 		return baseCollection;
 	}
@@ -89,13 +89,16 @@ public class EMFViewsCollectionWrapper implements Collection<EObject>, IAbstract
 	public Object[] toArray(Object[] a) {
 		return baseCollection.toArray(a);
 	}
-	
+
 	@Override
 	public AbstractOperation getAbstractOperation(String name) {
-		if("collect".equals(name)) {
-			return new EMFViewsDelegateCollectOperation();
-		}
-		throw new UnsupportedOperationException();
+	  if("collect".equals(name)) {
+	    return new EMFViewsDelegateCollectOperation();
+	  }
+	  else if ("select".equals(name)) {
+	    return new EMFViewsDelegateSelectOperation();
+	  }
+	  throw new UnsupportedOperationException();
 	}
-	
+
 }

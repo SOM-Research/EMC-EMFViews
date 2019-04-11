@@ -1,11 +1,10 @@
 package edu.uoc.som.emfviews.neoemf.example;
 import java.io.File;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
@@ -16,7 +15,6 @@ import org.eclipse.gmt.modisco.java.JavaPackage;
 
 import org.atlanmod.emfviews.core.EmfViewsFactory;
 import org.atlanmod.emfviews.core.EpsilonResource;
-import org.atlanmod.emfviews.core.ViewResource;
 import org.atlanmod.emfviews.virtuallinks.VirtualLinksPackage;
 
 import fr.inria.atlanmod.neoemf.data.PersistenceBackendFactoryRegistry;
@@ -25,44 +23,54 @@ import fr.inria.atlanmod.neoemf.data.blueprints.util.BlueprintsURI;
 import fr.inria.atlanmod.neoemf.resource.PersistentResourceFactory;
 
 public class RunEOL {
-  static String here = new File(".").getAbsolutePath();
+  static URI here = URI.createFileURI(new File(".").getAbsolutePath());
 
-  static URI resourceURI(String relativePath) {
-    return URI.createFileURI(here + relativePath);
+  static URI pathURI(String relativePath) {
+    return URI.createFileURI(relativePath).resolve(here);
   }
 
   public static void main(String[] args) throws Exception {
+
+    if (args.length != 2) {
+      System.err.println("Usage: run-eol EVIEW EOL");
+      System.exit(1);
+    }
+
+    URI viewPath = pathURI(args[0]);
+    URI programPath = pathURI(args[1]);
+
+    // Init Ecore packages that may be used by viewpoints
     EcorePackage.eINSTANCE.eClass();
-    Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
     VirtualLinksPackage.eINSTANCE.eClass();
-    Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+    JavaPackage.eINSTANCE.eClass();
+
+    // Register model file extensions to be opened as EMF models
+    Map<String, Object> ext2Fact = Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap();
+
+    ext2Fact.put("ecore", new EcoreResourceFactoryImpl());
+    ext2Fact.put("xmi", new XMIResourceFactoryImpl());
     Resource.Factory epsRF = new Resource.Factory() {
       @Override
       public Resource createResource(URI uri) {
         return new EpsilonResource(uri);
       }
     };
-    JavaPackage.eINSTANCE.eClass();
-    /*
-     * Register NeoEMF persistence backend and protocol to enable NeoEMF resource
-     * loading.
-     */
-    Resource.Factory.Registry.INSTANCE.getProtocolToFactoryMap().put(BlueprintsURI.SCHEME,
-      PersistentResourceFactory.getInstance());
+    ext2Fact.put("csv", epsRF);
+    ext2Fact.put("bib", epsRF);
+    ext2Fact.put("eview", new EmfViewsFactory());
+    ext2Fact.put("eviewpoint", new EmfViewsFactory());
+
+    // Register NeoEMF persistence backend and protocol to enable NeoEMF resource
+    // loading.
+    Resource.Factory.Registry.INSTANCE.getProtocolToFactoryMap().put(
+      BlueprintsURI.SCHEME, PersistentResourceFactory.getInstance());
     PersistenceBackendFactoryRegistry.register(BlueprintsURI.SCHEME,
       BlueprintsPersistenceBackendFactory.getInstance());
-    Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("eview", new EmfViewsFactory());
-    Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("eviewpoint", new EmfViewsFactory());
 
-    // Register Log metamodel
-    Resource log = (new ResourceSetImpl()).getResource(resourceURI("/metamodels/Log.ecore"), true);
-    EPackage logPackage = (EPackage) log.getContents().get(0);
-    EPackage.Registry.INSTANCE.put(logPackage.getNsURI(), logPackage);
-    System.out.printf("Loaded %s metamodel from %s\n", logPackage.getNsURI(), log.getURI());
 
-    // Run EOL query on the view
+    // Parse EOL program
     EolModule module = new EolModule();
-    module.parse("VIEW!Event.all.collect(e | Sequence { e.name, e.javaVariables }).println();");
+    module.parse(new File(programPath.toFileString()));
     if (module.getParseProblems().size() > 0) {
       System.err.println("Parse errors occured...");
       for (ParseProblem problem : module.getParseProblems()) {
@@ -72,16 +80,14 @@ public class RunEOL {
     }
     module.getContext().setOperationFactory(new EolOperationFactory());
 
-    // Add view
-    // Need the viewpoint as well
+    // Add view using the EMF Views EMC
     EMFViewsModel m = new EMFViewsModel();
     m.setName("VIEW");
-    m.setModelFileUri(resourceURI("/views/with-log/with-log.eview"));
-    m.setMetamodelFileUri(resourceURI("/views/with-log/with-log.eviewpoint"));
+    m.setModelFileUri(viewPath);
     m.load();
     module.getContext().getModelRepository().addModel(m);
 
-    // Execute the module
-    System.out.format("EOL result: %s", module.execute());
+    // Execute EOL
+    module.execute();
   }
 }
