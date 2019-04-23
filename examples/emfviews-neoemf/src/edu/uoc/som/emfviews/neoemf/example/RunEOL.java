@@ -14,7 +14,12 @@ import org.eclipse.epsilon.emc.emfviews.EMFViewsModel;
 import org.eclipse.epsilon.eol.EolModule;
 import org.eclipse.epsilon.eol.execute.operations.EolOperationFactory;
 import org.eclipse.gmt.modisco.java.JavaPackage;
-
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.atlanmod.emfviews.core.EmfViewsFactory;
 import org.atlanmod.emfviews.core.EpsilonResource;
 import org.atlanmod.emfviews.virtuallinks.VirtualLinksPackage;
@@ -46,13 +51,37 @@ public class RunEOL {
 
   public static void main(String[] args) throws Exception {
 
-    if (args.length != 2) {
-      System.err.println("Usage: run-eol EVIEW EOL");
-      System.exit(1);
-    }
+    // Default arguments
+    boolean forceEMFEMC = false;
+    URI viewPath = pathURI("/views/trivial/test.eview");
+    URI programPath = pathURI("query/allClass.eol");
 
-    URI viewPath = pathURI(args[0]);
-    URI programPath = pathURI(args[1]);
+    // Parse command line options
+    {
+      Options opts = new Options();
+      opts.addOption("u", false, "force default (slower) EMF EMC");
+
+      CommandLineParser parser = new BasicParser();
+      CommandLine cmd;
+
+      final String usage = "run-eol [-u] EVIEW EOL";
+
+      try {
+        cmd = parser.parse(opts, args);
+        if (cmd.getArgList().size() != 2) {
+          System.err.printf("Usage: %s\n", usage);
+          System.exit(1);
+        }
+
+        forceEMFEMC = cmd.hasOption("u");
+        viewPath = pathURI(cmd.getArgs()[0]);
+        programPath = pathURI(cmd.getArgs()[1]);
+      } catch (ParseException e) {
+        System.out.println(e.getMessage());
+        (new HelpFormatter()).printHelp(usage, opts);
+        System.exit(1);
+      }
+    }
 
     // Init Ecore packages that may be used by viewpoints
     EcorePackage.eINSTANCE.eClass();
@@ -97,6 +126,7 @@ public class RunEOL {
 
     // Add view using the EMF Views EMC
     EMFViewsModel m = new EMFViewsModel();
+    m.setForceDefaultEMFDriver(forceEMFEMC);
     m.setName("VIEW");
     m.setModelFileUri(viewPath);
     m.load();
