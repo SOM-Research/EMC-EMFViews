@@ -29,6 +29,11 @@ import fr.inria.atlanmod.neoemf.resource.PersistentResource;
 public class EMFViewsModel extends EmfModel {
 
   private Map<Resource, IModel> models = new HashMap<>();
+  private boolean forceDefaultEMFDriver = false;
+
+  public void setForceDefaultEMFDriver(boolean use) {
+    forceDefaultEMFDriver = use;
+  }
 
   @Override
   public Collection<EObject> getAllOfKind(String kind) throws EolModelElementTypeNotFoundException {
@@ -76,15 +81,22 @@ public class EMFViewsModel extends EmfModel {
 
     for(Resource resource : r.getView().getContributingModels()) {
       IModel model;
-      if (resource instanceof EpsilonResource) {
-        model = ((EpsilonResource) resource).getEpsilonModel();
-      }
-      else if (resource instanceof PersistentResource) {
-        model = initNeoEMFModel(resource);
-      }
-      // else if (additional supported backends)
-      else {
+
+      // Forcing the default EMF driver is useful for testing and benchmarking.
+      if (forceDefaultEMFDriver) {
         model = initDefaultEMFModel(resource);
+      } else {
+
+        if (resource instanceof EpsilonResource) {
+          model = ((EpsilonResource) resource).getEpsilonModel();
+        }
+        else if (resource instanceof PersistentResource) {
+          model = initNeoEMFModel(resource);
+        }
+        // else if (additional supported backends)
+        else {
+          model = initDefaultEMFModel(resource);
+        }
       }
       models.put(resource, model);
     }
