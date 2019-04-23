@@ -1,2 +1,2 @@
-contributingMetamodels=http://www.eclipse.org/MoDisco/Java/0.2.incubation/java-neoemf
+contributingMetamodels=java::http://www.eclipse.org/MoDisco/Java/0.2.incubation/java-neoemf
 saveInRegistry
