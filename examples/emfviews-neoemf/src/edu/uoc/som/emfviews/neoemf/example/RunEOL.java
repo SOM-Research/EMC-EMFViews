@@ -1,5 +1,7 @@
 package edu.uoc.som.emfviews.neoemf.example;
 import java.io.File;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -28,6 +30,19 @@ public class RunEOL {
   static URI pathURI(String relativePath) {
     return URI.createFileURI(relativePath).resolve(here);
   }
+
+  public interface Thunk {
+    void apply() throws Exception;
+  }
+
+  static void time(String task, Thunk f) throws Exception {
+    Instant start = Instant.now();
+    f.apply();
+    Instant end = Instant.now();
+    System.out.printf("%s [%dms]\n", task, ChronoUnit.MILLIS.between(start, end));
+  }
+
+
 
   public static void main(String[] args) throws Exception {
 
@@ -88,6 +103,6 @@ public class RunEOL {
     module.getContext().getModelRepository().addModel(m);
 
     // Execute EOL
-    module.execute();
+    time("EOL execute query", () -> module.execute());
   }
 }
