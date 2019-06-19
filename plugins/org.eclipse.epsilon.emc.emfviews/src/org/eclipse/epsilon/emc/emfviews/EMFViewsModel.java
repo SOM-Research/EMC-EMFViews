@@ -126,19 +126,13 @@ public class EMFViewsModel extends EmfModel {
   @Override
   public void disposeModel() {
     ViewResource r = (ViewResource) modelImpl;
-    /*
-     * Quickfix: we need to manually unload the NeoEMF resource contributing to the
-     * view, otherwise the database lock is not released and its not possible to
-     * compute another EOL program on top of it.
-     *
-     * @fmdkdd this should probably be moved in EMFViews core, we need to discuss this.
-     */
-    for (Resource resource : r.getView().getContributingModels()) {
-      if (resource instanceof PersistentResource) {
-        ((PersistentResource) resource).close();
-      }
-    }
-    super.disposeModel();
+    r.close();
+
+    // This is trying to unload elements from the underlying resources, and
+    // throwing exceptions in CDO because r.close above shuts down the CDO
+    // backend.
+    // FIXME: Do we need it?
+    // super.disposeModel();
   }
 
 }
