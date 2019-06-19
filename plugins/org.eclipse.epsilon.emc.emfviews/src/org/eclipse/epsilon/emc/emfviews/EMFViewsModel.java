@@ -2,6 +2,7 @@ package org.eclipse.epsilon.emc.emfviews;
 
 import static java.text.MessageFormat.format;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,12 +10,9 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.epsilon.emc.emf.EmfModel;
-import org.eclipse.epsilon.emc.emf.EmfUtil;
 import org.eclipse.epsilon.emc.neoemf.NeoEMFModel;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
@@ -30,6 +28,7 @@ public class EMFViewsModel extends EmfModel {
 
   private Map<Resource, IModel> models = new HashMap<>();
   private boolean forceDefaultEMFDriver = false;
+  public ViewResource.Delegator delegator;
 
   public void setForceDefaultEMFDriver(boolean use) {
     forceDefaultEMFDriver = use;
@@ -76,8 +75,22 @@ public class EMFViewsModel extends EmfModel {
 
   @Override
   public void load() throws EolModelLoadingException {
+    // Prevent EmfModel.load to actually load the ViewResource, since we need to
+    // set the custom delegator (if it exists) before loading.
+    setReadOnLoad(false);
     super.load();
     ViewResource r = (ViewResource) modelImpl;
+
+    // Set the custom delegator, if any
+    if (delegator != null)
+      r.customDelegator = delegator;
+
+    // Then actually load the resource
+    try {
+      r.load(null);
+    } catch (IOException e) {
+      throw new EolModelLoadingException(e, this);
+    }
 
     for(Resource resource : r.getView().getContributingModels()) {
       IModel model;
