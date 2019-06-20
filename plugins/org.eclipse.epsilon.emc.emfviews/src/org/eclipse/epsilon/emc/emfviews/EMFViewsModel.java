@@ -2,7 +2,6 @@ package org.eclipse.epsilon.emc.emfviews;
 
 import static java.text.MessageFormat.format;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +12,7 @@ import java.util.stream.Stream;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.epsilon.emc.emf.EmfModel;
+import org.eclipse.epsilon.emc.emf.InMemoryEmfModel;
 import org.eclipse.epsilon.emc.neoemf.NeoEMFModel;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelElementTypeNotFoundException;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
@@ -24,11 +24,14 @@ import org.atlanmod.emfviews.core.ViewResource;
 
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
 
-public class EMFViewsModel extends EmfModel {
+public class EMFViewsModel extends InMemoryEmfModel {
+
+  public EMFViewsModel(Resource modelImpl) {
+    super(modelImpl);
+  }
 
   private Map<Resource, IModel> models = new HashMap<>();
   private boolean forceDefaultEMFDriver = false;
-  public ViewResource.Delegator delegator;
 
   public void setForceDefaultEMFDriver(boolean use) {
     forceDefaultEMFDriver = use;
@@ -75,22 +78,8 @@ public class EMFViewsModel extends EmfModel {
 
   @Override
   public void load() throws EolModelLoadingException {
-    // Prevent EmfModel.load to actually load the ViewResource, since we need to
-    // set the custom delegator (if it exists) before loading.
-    setReadOnLoad(false);
     super.load();
     ViewResource r = (ViewResource) modelImpl;
-
-    // Set the custom delegator, if any
-    if (delegator != null)
-      r.customDelegator = delegator;
-
-    // Then actually load the resource
-    try {
-      r.load(null);
-    } catch (IOException e) {
-      throw new EolModelLoadingException(e, this);
-    }
 
     for(Resource resource : r.getView().getContributingModels()) {
       IModel model;
@@ -112,13 +101,13 @@ public class EMFViewsModel extends EmfModel {
         }
       }
       models.put(resource, model);
+      System.out.printf("Loaded EMF connector %s for model %s\n",
+        model.getClass().getSimpleName(), resource.getURI());
     }
   }
 
   private IModel initNeoEMFModel(Resource resource) {
     NeoEMFModel model = new NeoEMFModel();
-    System.out.printf("Loading EMF connector %s for model %s\n",
-      model.getClass().getSimpleName(), resource.getURI());
     model.setResource(resource);
     model.initBackend();
     model.setGremlinSupport(true);
@@ -127,8 +116,6 @@ public class EMFViewsModel extends EmfModel {
 
   private IModel initDefaultEMFModel(Resource resource) {
     EmfModel model = new EmfModel();
-    System.out.printf("Loading EMF connector %s for model %s\n",
-      model.getClass().getSimpleName(), resource.getURI());
     model.setResource(resource);
     return model;
   }
