@@ -23,6 +23,7 @@ import org.atlanmod.emfviews.core.View;
 import org.atlanmod.emfviews.core.ViewResource;
 
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
+import fr.inria.atlanmod.neoemf.util.logging.NeoLogger;
 
 public class EMFViewsModel extends InMemoryEmfModel {
 
@@ -39,13 +40,13 @@ public class EMFViewsModel extends InMemoryEmfModel {
 
   @Override
   public Collection<EObject> getAllOfKind(String kind) throws EolModelElementTypeNotFoundException {
-    System.out.println("EMF Views Driver: AllOfKind(" + kind + ")");
+    NeoLogger.info("EMF Views Driver: AllOfKind(" + kind + ")");
 
     // Go through each contributing model, find the one holding instances of
     // KIND, and delegate to it
     for (Entry<Resource, IModel> e : models.entrySet()) {
       if (e.getValue().hasType(kind)) {
-        System.out.printf("Model %s has type %s\n", e.getKey().getURI(), kind);
+        NeoLogger.info("Model %s has type %s\n", e.getKey().getURI(), kind);
 
         // Maybe return a thunk instead of eagerly creating the collection?
         Stream<?> result = e.getValue().getAllOfKind(kind).stream();
@@ -84,24 +85,23 @@ public class EMFViewsModel extends InMemoryEmfModel {
     for(Resource resource : r.getView().getContributingModels()) {
       IModel model;
 
-      // Forcing the default EMF driver is useful for testing and benchmarking.
-      if (forceDefaultEMFDriver) {
-        model = initDefaultEMFModel(resource);
-      } else {
-
-        if (resource instanceof EpsilonResource) {
-          model = ((EpsilonResource) resource).getEpsilonModel();
-        }
-        else if (resource instanceof PersistentResource) {
+      if (resource instanceof EpsilonResource) {
+        model = ((EpsilonResource) resource).getEpsilonModel();
+      }
+      else if (resource instanceof PersistentResource) {
+     // Forcing the default EMF driver is useful for testing and benchmarking.
+        if (forceDefaultEMFDriver) {
+          model = initDefaultEMFModel(resource);
+        } else {
           model = initNeoEMFModel(resource);
         }
-        // else if (additional supported backends)
-        else {
-          model = initDefaultEMFModel(resource);
-        }
+      }
+      // else if (additional supported backends)
+      else {
+        model = initDefaultEMFModel(resource);
       }
       models.put(resource, model);
-      System.out.printf("Loaded EMF connector %s for model %s\n",
+      NeoLogger.info("Loaded EMF connector %s for model %s\n",
         model.getClass().getSimpleName(), resource.getURI());
     }
   }
