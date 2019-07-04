@@ -46,7 +46,7 @@ public class EMFViewsModel extends InMemoryEmfModel {
     // KIND, and delegate to it
     for (Entry<Resource, IModel> e : models.entrySet()) {
       if (e.getValue().hasType(kind)) {
-        NeoLogger.info("Model %s has type %s\n", e.getKey().getURI(), kind);
+        NeoLogger.info(String.format("Model %s has type %s\n", e.getKey().getURI(), kind));
 
         // Maybe return a thunk instead of eagerly creating the collection?
         Stream<?> result = e.getValue().getAllOfKind(kind).stream();
@@ -101,8 +101,8 @@ public class EMFViewsModel extends InMemoryEmfModel {
         model = initDefaultEMFModel(resource);
       }
       models.put(resource, model);
-      NeoLogger.info("Loaded EMF connector %s for model %s\n",
-        model.getClass().getSimpleName(), resource.getURI());
+      NeoLogger.info(String.format("Loaded EMF connector %s for model %s\n",
+        model.getClass().getSimpleName(), resource.getURI()));
     }
   }
 
