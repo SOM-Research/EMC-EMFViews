@@ -25,10 +25,10 @@ import org.atlanmod.emfviews.core.ViewResource;
 import fr.inria.atlanmod.neoemf.resource.PersistentResource;
 import fr.inria.atlanmod.neoemf.util.logging.NeoLogger;
 
-public class EMFViewsModel extends InMemoryEmfModel {
+public class EMFViewsModel extends EmfModel {
 
   public EMFViewsModel(Resource modelImpl) {
-    super(modelImpl);
+    this.modelImpl = modelImpl;
   }
 
   private Map<Resource, IModel> models = new HashMap<>();
@@ -79,7 +79,6 @@ public class EMFViewsModel extends InMemoryEmfModel {
 
   @Override
   public void load() throws EolModelLoadingException {
-    super.load();
     ViewResource r = (ViewResource) modelImpl;
 
     for(Resource resource : r.getView().getContributingModels()) {
