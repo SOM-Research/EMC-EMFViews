@@ -2,13 +2,12 @@ package org.eclipse.epsilon.emc.emfviews;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.ListIterator;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.epsilon.emc.neoemf.ImmutableList;
 import org.eclipse.epsilon.eol.execute.operations.AbstractOperation;
 import org.eclipse.epsilon.eol.execute.operations.declarative.IAbstractOperationContributor;
-import org.eclipse.epsilon.eol.models.IModel;
+import org.eclipse.epsilon.eol.execute.operations.declarative.SelectOneOperation;
+import org.eclipse.epsilon.eol.execute.operations.declarative.SelectOperation;
 
 public class EMFViewsCollectionWrapper implements Collection<EObject>, IAbstractOperationContributor {
 
@@ -96,7 +95,10 @@ public class EMFViewsCollectionWrapper implements Collection<EObject>, IAbstract
 	    return new EMFViewsDelegateCollectOperation();
 	  }
 	  else if ("select".equals(name)) {
-	    return new EMFViewsDelegateSelectOperation();
+	    return new SelectOperation();
+	  }
+	  else if ("selectOne".equals(name)) {
+	    return new SelectOneOperation();
 	  }
 	  throw new UnsupportedOperationException();
 	}
